@@ -9,5 +9,12 @@
 #include <string.h>
 #include <elf.h>
 
-uint8_t     *open_file(char *file_name);
+typedef struct s_file {
+    int         fd;
+    off_t       size;
+    char        *path;
+    uint8_t     *ptr;
+}   t_file;
+
+t_file      *open_file(char *file_name);
 void        print_ehdr(const Elf64_Ehdr *eHdr);
