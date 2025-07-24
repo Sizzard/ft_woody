@@ -1,10 +1,11 @@
 NAME = woody_woodpacker
 TEST = sample
-SRCS = main.c srcs/utils.c
+SRCS = main.c srcs/utils.c srcs/injection.c
 CFLAGS = -Wall -Wextra -Werror
 OBJ = $(SRCS:.c=.o)
 
 all : $(NAME)
+	gcc -no-pie -fno-pie write_file.c
 
 test : $(TEST)
 

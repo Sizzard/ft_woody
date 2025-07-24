@@ -1,14 +1,14 @@
 
 
 all:
-	cd vagrant && vagrant up && vagrant ssh
 	make -C code
+	cd vagrant && vagrant up && vagrant ssh
 
 clean:
 	make clean -C code
 
 fclean:
-	cd vagrant && vagrant destroy
 	make fclean -C code
+	cd vagrant && vagrant destroy
 
 re: fclean all

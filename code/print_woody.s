@@ -2,12 +2,8 @@ global print_woody
 
 section .text
 
-;0x2e0x2e0x2e0x2e
-;0x570x4f0x4f0x44
-;0x590x2e0x2e0x2e
-;0x2e0xa0
-
 print_woody:
+  mov rbx, rsp
   mov rax, 1
   mov rdi, 1
   mov rdx, 4
@@ -27,6 +23,6 @@ print_woody:
   push 0x0a2e
   mov rsi, rsp
   syscall
-  mov rax, 60
-  mov rdi, 42
-  syscall
+  xor rax, rax
+  xor rdx, rdx
+  mov rsp, rbx

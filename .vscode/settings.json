@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "woody.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "stat.h": "c"
     }
 }

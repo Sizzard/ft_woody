@@ -1,32 +1,25 @@
 #include "woody.h"
 
-bool inject_woody(t_file *file, uint64_t entrypoint) {
-    unsigned char shellcode[87] = {0xb8, 0x01, 0x00, 0x00, 0x00, 0xbf, 0x01, 0x00, 0x00, 0x00, 0xba, 0x04, 0x00, 0x00, 0x00, 0x68, 0x2e, 0x2e, 0x2e, 0x2e, 0x48, 0x89, 0xe6, 0x0f, 0x05, 0xb8, 0x01, 0x00, 0x00, 0x00, 0x68, 0x57, 0x4f, 0x4f, 0x44, 0x48, 0x89, 0xe6, 0x0f, 0x05, 0xb8, 0x01, 0x00, 0x00, 0x00, 0x68, 0x59, 0x2e, 0x2e, 0x2e, 0x48, 0x89, 0xe6, 0x0f, 0x05, 0xb8, 0x01, 0x00, 0x00, 0x00, 0xba, 0x02, 0x00, 0x00, 0x00, 0x68, 0x2e, 0x0a, 0x00, 0x00, 0x48, 0x89, 0xe6, 0x0f, 0x05, 0xb8, 0x3c, 0x00, 0x00, 0x00, 0xbf, 0x2a, 0x00, 0x00, 0x00, 0x0f, 0x05};
-    int ret;
-    int fd = open(file->path, O_WRONLY);
-    
-    if (fd == -1) {
-        fprintf(stderr, "Couldn't inject payload\n");
-        return 1;
-    }
-
-    lseek(fd, entrypoint, SEEK_SET);
-    ret = write(fd, shellcode, sizeof(shellcode));
-    printf("%d\n", ret);
-    if (ret > 0) {
-        printf("Payload successfully injected at 0x%lx --- %ld\n", entrypoint, entrypoint);
-    }
-    else {
-        fprintf(stderr, "Couldn't inject payload\n");
-    }
-    return ret;
-}
-
 bool handle_file(t_file *file) {
-    const Elf64_Ehdr *eHdr = (Elf64_Ehdr *)file->ptr;
-    print_ehdr(eHdr);
-    inject_woody(file, eHdr->e_entry);
-    return true;
+    Elf64_Ehdr *eHdr = (Elf64_Ehdr *)file->ptr;
+    Elf64_Phdr *pHdr;
+    uint64_t og_entry =  eHdr->e_entry;
+    // print_ehdr(eHdr);
+    // print_all_phdr(file, eHdr);
+    printf("ENTRY POINT = 0x%08lx\n", eHdr->e_entry);
+    // printf(" and = 0x%04lx\n", (uint64_t)file->ptr[eHdr->e_entry]);
+
+    pHdr = find_pt_note_phdr(file, eHdr);
+    if (pHdr == NULL) {
+        fprintf(stderr, "woody: Coulnd't find PT_NOTE section in file %s, aborting\n ", file->path);
+        return true;
+    }
+    puts("Found PT_NOTE pHdr");
+    // print_phdr(pHdr);
+    hijack_phdr(file, eHdr, pHdr);
+
+    append_payload(file, og_entry);
+    return false;
 }
 
 
