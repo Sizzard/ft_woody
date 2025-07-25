@@ -10,7 +10,7 @@ print_woody:
     syscall
     xor rdi, rdi
     xor rdx, rdx
-    mov rax, 0x1234567812345678
+    mov rax, 0x0000000000000000
     jmp rax
 
 woody_string:

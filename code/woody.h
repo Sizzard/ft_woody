@@ -10,10 +10,11 @@
 #include <elf.h>
 
 typedef struct s_file {
-    int         fd;
-    off_t       size;
-    char        *path;
     uint8_t     *ptr;
+    char        *path;
+    off_t       size;
+    int         fd;
+    bool        pie;
 }   t_file;
 
 #define PAYLOAD_SIZE 100
@@ -24,4 +25,5 @@ void                print_all_phdr(t_file *file, const Elf64_Ehdr *eHdr) ;
 void                print_phdr(const Elf64_Phdr *pHdr);
 Elf64_Phdr          *find_pt_note_phdr(t_file *file, const Elf64_Ehdr *eHdr);
 void                hijack_phdr(t_file *file, Elf64_Ehdr *eHdr, Elf64_Phdr *pHdr);
-bool                append_payload(t_file *file, uint64_t og_entry);
+bool                append_payload_no_pie(t_file *file, uint64_t og_entry);
+bool                append_payload_pie(t_file *file, uint64_t og_entry);

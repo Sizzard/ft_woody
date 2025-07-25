@@ -5,7 +5,7 @@ CFLAGS = -Wall -Wextra -Werror
 OBJ = $(SRCS:.c=.o)
 
 all : $(NAME)
-	gcc -no-pie -fno-pie write_file.c
+	gcc write_file.c
 
 test : $(TEST)
 

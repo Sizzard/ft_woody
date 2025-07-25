@@ -1,10 +1,14 @@
-global get_proc_value
+global print_woody
 
 section .text
 
-;rsp - 13 = buf
+print_woody:
+    mov rdi, 1
+    lea rsi, [rel woody_string]
+    mov rdx, 14
+    mov rax, 1
+    syscall
 
-get_proc_value:
     mov r10, rsp
 
     sub rsp, 13
@@ -58,8 +62,14 @@ get_proc_value:
 
 .done:
     mov rsp, r10
+    xor rdi, rdi
+    xor rdx, rdx
     add rax, 0xaaaaaaaa
     jmp rax
 
 proc_string:
     db "/proc/self/maps", 0
+
+woody_string:
+    db "....WOODY....", 0x0a
+    
