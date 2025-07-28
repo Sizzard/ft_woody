@@ -17,7 +17,10 @@ bool append_payload_no_pie(t_file *file, uint64_t og_entry) {
     printf("Copying 0x%04lX into shellcode\n", og_entry);
     memcpy(payload + 32, &og_entry, 8);
 
-    lseek(file->fd, 0, SEEK_END);
+    if (lseek(file->fd, 0, SEEK_END) == (off_t) -1) {
+        fprintf(stderr, "woody: Can't seek file\n");
+        return ERROR;
+    }
     ret = write(file->fd, payload, sizeof(payload));
     printf("Wrote : %d/%ld bytes into %s\n", ret, sizeof(payload), file->path);
     if (ret > 0) {
@@ -37,7 +40,10 @@ bool append_payload_pie(t_file *file, uint64_t og_entry) {
     printf("Copying 0x%04lX into shellcode\n", og_entry);
     memcpy(payload + 162, &entry_lo, 4);
 
-    lseek(file->fd, 0, SEEK_END);
+    if (lseek(file->fd, 0, SEEK_END) == (off_t) -1) {
+        fprintf(stderr, "woody: Can't seek file\n");
+        return ERROR;
+    }
     ret = write(file->fd, payload, sizeof(payload));
     printf("Wrote : %d/%ld bytes into %s\n", ret, sizeof(payload), file->path);
     if (ret > 0) {

