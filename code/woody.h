@@ -17,7 +17,7 @@ typedef struct s_file {
     bool        pie;
 }   t_file;
 
-#define PAYLOAD_SIZE 100
+#define PAYLOAD_SIZE 500
 #define ERROR 1
 
 t_file              *open_file(char *file_name);
@@ -29,3 +29,7 @@ Elf64_Phdr          *find_pt_note_phdr(t_file *file, const Elf64_Ehdr *eHdr);
 void                hijack_phdr(t_file *file, Elf64_Ehdr *eHdr, Elf64_Phdr *pHdr);
 bool                append_payload_no_pie(t_file *file, uint64_t og_entry);
 bool                append_payload_pie(t_file *file, uint64_t og_entry);
+
+int                 encrypt(t_file *file, size_t text_offset, size_t text_size);
+Elf64_Shdr          *find_texttab(t_file *file, const Elf64_Ehdr *eHdr);
+void                print_shdr(const Elf64_Shdr *shdr);

@@ -2,43 +2,60 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 
-void encrypt (uint32_t v[2], const uint32_t k[4]) {
-    uint32_t v0=v[0], v1=v[1], sum=0, i;           /* set up */
-    uint32_t delta=0x9E3779B9;                     /* a key schedule constant */
-    uint32_t k0=k[0], k1=k[1], k2=k[2], k3=k[3];   /* cache key */
-    for (i=0; i<32; i++) {                         /* basic cycle start */
-        sum += delta;
-        v0 += ((v1<<4) + k0) ^ (v1 + sum) ^ ((v1>>5) + k1);
-        v1 += ((v0<<4) + k2) ^ (v0 + sum) ^ ((v0>>5) + k3);
-    }                                              /* end cycle */
-    v[0]=v0; v[1]=v1;
+void swap(unsigned char *a, unsigned char *b) {
+    unsigned char tmp;
+    tmp = *a;
+    *a = *b;
+    *b = tmp;
 }
 
-void decrypt (uint32_t v[2], const uint32_t k[4]) {
-    uint32_t v0=v[0], v1=v[1], sum=0xC6EF3720, i;  /* set up; sum is (delta << 5) & 0xFFFFFFFF */
-    uint32_t delta=0x9E3779B9;                     /* a key schedule constant */
-    uint32_t k0=k[0], k1=k[1], k2=k[2], k3=k[3];   /* cache key */
-    for (i=0; i<32; i++) {                         /* basic cycle start */
-        v1 -= ((v0<<4) + k2) ^ (v0 + sum) ^ ((v0>>5) + k3);
-        v0 -= ((v1<<4) + k0) ^ (v1 + sum) ^ ((v1>>5) + k1);
-        sum -= delta;
-    }                                              /* end cycle */
-    v[0]=v0; v[1]=v1;
+void rc4_encrypt(unsigned char *K, unsigned char *text) {
+    unsigned char S[256];
+    for (int i = 0; i < 256; i++) {
+        // printf("%d, ", i);
+        S[i] = i;
+    }
+    for (int i, j = 0; i < 256; i++) {
+        j = (j + S[i] + K[i]) % 256;
+        swap(&S[i], &S[j]);
+    }
+    for(int idx, i, j = 0; idx < 256; idx++) {
+        i = (i + 1) % 256;
+        j = (j + S[i]) % 256;
+        swap(&S[i], &S[j]);
+    }
+    for(int i = 0; i < 388; i++) {
+        text[i] = text[i] ^ S[i];
+        printf("%d, ", text[i]);
+    }
+    puts("");
+    for(int i = 0; i < 388; i++) {
+        unsigned char decrypted = text[i] ^ S[i];
+        printf("%c", decrypted);
+    }
 }
 
 int main(void) {
-    char buffer[8] = {0};
-    uint32_t key[4] = {331172730, 1229588391, 676941200, 210081582};
+    
+    unsigned char key[256];
+    unsigned char text[] = "Ceci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normale\n";
 
-    int fd = open("test.txt", O_RDWR);
-    int red = read(fd, buffer, sizeof(buffer));
-    while((red = read(fd, buffer, sizeof(buffer))) > 0) {
-        printf("red : %d\n", red);
-        printf("Buffer : %s\n", buffer);
-        encrypt((uint32_t *)buffer, key);
-        printf("Encrypted : %s\n", buffer);
-        decrypt((uint32_t *)buffer, key);
-        printf("Decrypted %s\n", buffer);
+    int fd = open("/dev/random", O_RDONLY);
+    if (fd == -1) {
+        fprintf(stderr, "woody: can't open /dev/random");
+        return 1;
     }
+    int red = read(fd, key, 256);
+    if (red != 256) {
+        fprintf(stderr, "woody: can't read /dev/random");
+        return 1;
+    }
+    puts("Key is :");
+    for (int i = 0; i < 256; i++) {
+        printf("%c", key[i]);
+    }
+    puts("\nEncrypted text is :");
+    rc4_encrypt(key, text);
 }

@@ -7,7 +7,10 @@ print_woody:
     lea rsi, [rel woody_string]
     mov rdx, 14
     mov rax, 1
-    syscall
+    syscall ; write(1, "....WOODY....", 14);
+
+    cmp rax, 0
+    jle .error
 
     mov r10, rsp
 
@@ -17,19 +20,24 @@ print_woody:
     lea rdi, [rel proc_string]
     syscall ; open("/proc/self/maps", O_RDONLY);
 
+    cmp rax, 0
+    jle .error
+
     mov rdi, rax
     mov rax, 0
     lea rsi, [rsp - 13]
     mov rdx, 12
     syscall ; read(rax, buf, 12);
 
+    cmp rax, 0
+    jle .error
 
     mov rax, 1
     mov rdi, 1
     mov byte [rsp - 1], 0x0a
     lea rsi, [rsp - 13] 
     mov rdx, 13
-    syscall ; write(1, buf, 13);
+    syscall ; write(1, buf, 13);    to print the address
 
 
     mov byte [rsp - 1], 0x0
@@ -66,6 +74,11 @@ print_woody:
     xor rdx, rdx
     add rax, 0xaaaaaaaa
     jmp rax
+
+.error:
+    xor rdi, rdi
+    mov rax, 60
+    syscall ; exit(0);
 
 proc_string:
     db "/proc/self/maps", 0

@@ -1,6 +1,6 @@
 NAME = woody_woodpacker
 TEST = sample
-SRCS = main.c srcs/utils.c srcs/injection.c
+SRCS = main.c srcs/utils.c srcs/injection.c srcs/encrypt.c
 CFLAGS = -Wall -Wextra -Werror
 OBJ = $(SRCS:.c=.o)
 

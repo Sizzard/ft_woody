@@ -34,6 +34,13 @@ bool handle_file(t_file *file) {
     else {
         append_payload_pie(file, og_entry);
     }
+
+    const Elf64_Shdr *shdr = find_texttab(file, eHdr);
+    if (shdr == NULL) {
+        fprintf(stderr, "woody: no .text section in file provided\n");
+        return 1;
+    }
+    encrypt(file, shdr->sh_offset, shdr->sh_size);
     return 0;
 }
 
@@ -59,6 +66,7 @@ int main(int ac, char **av) {
 
     handle_file(file);
     
+    munmap(file->ptr, file->size);
     free(file);
 
     return 0;

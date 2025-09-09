@@ -29,6 +29,19 @@ void print_phdr(const Elf64_Phdr *pHdr) {
     printf("p_align     =   0x%08lx -- %ld\n", pHdr->p_align, pHdr->p_align);
 }
 
+void print_shdr(const Elf64_Shdr *shdr) {
+    printf("sh_name         = 0x%08x -- %d\n", shdr->sh_name, shdr->sh_name);
+    printf("sh_type         = 0x%08x -- %d\n", shdr->sh_type, shdr->sh_type);
+    printf("sh_flags        = 0x%08lx -- %ld\n", shdr->sh_flags, shdr->sh_flags);
+    printf("sh_addr         = 0x%08lx -- %ld\n", shdr->sh_addr, shdr->sh_addr);
+    printf("sh_offset       = 0x%08lx -- %ld\n", shdr->sh_offset, shdr->sh_offset);
+    printf("sh_size         = 0x%08lx -- %ld\n", shdr->sh_size, shdr->sh_size);
+    printf("sh_link         = 0x%08x -- %d\n", shdr->sh_link, shdr->sh_link);
+    printf("sh_info         = 0x%08x -- %d\n", shdr->sh_info, shdr->sh_info);
+    printf("sh_addralign    = 0x%08lx -- %ld\n", shdr->sh_addralign, shdr->sh_addralign);
+    printf("sh_entsize      = 0x%08lx -- %ld\n", shdr->sh_entsize, shdr->sh_entsize);
+}
+
 void print_all_phdr(t_file *file, const Elf64_Ehdr *eHdr) {
 
     for(uint16_t i = 0; i < eHdr->e_phnum; i++) {
@@ -52,6 +65,49 @@ int	ft_strncmp(const uint8_t *s1, const uint8_t *s2, size_t n)
 		i++;
 	res = (unsigned char)s1[i] - (unsigned char)s2[i];
 	return (res);
+}
+
+size_t ft_strlen(const char *str) {
+    int i = 0;
+    while (str[i]) {
+        i++;
+    }
+    return i;
+}
+
+Elf64_Shdr *find_texttab(t_file *file, const Elf64_Ehdr *eHdr) {
+    const Elf64_Shdr *shStrTab = (Elf64_Shdr *)&file->ptr[eHdr->e_shoff + (sizeof(Elf64_Shdr) * eHdr->e_shstrndx)];
+    // if (!is_within_file_range(file->ptr, (void *)shStrTab)) {
+    //     ft_putstr_fd("Error while parsing file->ptr\n", 2);
+    //     return 1;
+    // }
+
+    const char *shStrTab_data = (const char *)(file->ptr + shStrTab->sh_offset);
+    // if (!is_within_file_range(file->ptr, (void *)shStrTab_data)) {
+    //     ft_putstr_fd("Error while parsing file->ptr\n", 2);
+    //     return 1;
+    // }
+    for (int i = 0; i < eHdr->e_shnum; i++) {
+        const long unsigned int sHdr_offset = eHdr->e_shoff + (sizeof(Elf64_Shdr) * i);
+        if (sHdr_offset >= (long unsigned int)file->size) {
+            return NULL;
+        }
+        Elf64_Shdr *sHdr = (Elf64_Shdr *)(file->ptr + sHdr_offset);
+        // if (!is_within_file_range(file->ptr, (void *)sHdr)) {
+        //     return -1;
+        // }
+        const char *section_name = shStrTab_data + sHdr->sh_name;
+        // if (!is_within_file_range(file->ptr, (void *)section_name)) {
+        //     return -1;
+        // }
+        // printf(" [%2d] : %s\n", i, section_name);
+        if (ft_strncmp((const uint8_t *)section_name, (const uint8_t *)".text", ft_strlen(".text")) == 0) {
+            printf("%s found at index %d\n", section_name, i);
+            print_shdr(sHdr);
+            return sHdr;
+        }
+    }
+    return NULL;
 }
 
 Elf64_Phdr *find_pt_note_phdr(t_file *file, const Elf64_Ehdr *eHdr) {

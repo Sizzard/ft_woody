@@ -6,7 +6,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-extern uint64_t get_proc_value();
+// extern uint64_t get_proc_value();
+extern void encrypt();
+
 // uint64_t get_proc_value() {
 //     uint64_t address;
 //     char buffer[13] = {0};
@@ -17,45 +19,46 @@ extern uint64_t get_proc_value();
 //     return address;
 // }
 
-uint64_t strtox() {
-    char buf[13];
-    uint64_t res;
-    int fd;
-    int i;
+// uint64_t strtox() {
+//     char buf[13];
+//     uint64_t res;
+//     int fd;
+//     int i;
 
-    buf[12] = 0;
-    fd = open("/proc/self/maps", O_RDONLY);
+//     buf[12] = 0;
+//     fd = open("/proc/self/maps", O_RDONLY);
 
-    read(fd, buf, 12);
+//     read(fd, buf, 12);
 
-    // printf("%s\n", buf);
+//     // printf("%s\n", buf);
 
-    i = 0;
-    res = 0;
+//     i = 0;
+//     res = 0;
 
-    while (buf[i]) {
+//     while (buf[i]) {
 
-        res *= 16;
+//         res *= 16;
 
-        if (buf[i] < 58) {
+//         if (buf[i] < 58) {
 
-            res += buf[i];
-            res -= 48;
+//             res += buf[i];
+//             res -= 48;
 
-        }
-        else {
+//         }
+//         else {
 
-            res += buf[i];
-            res-= 87;
+//             res += buf[i];
+//             res-= 87;
 
-        }
-        i++;
-    }
+//         }
+//         i++;
+//     }
 
-    return res;
-}
+//     return res;
+// }
 
 int main(void) {
-    printf("%lx\n", get_proc_value());
+    // printf("%lx\n", get_proc_value());
+    encrypt();
     // printf("%lx\n", strtox());
 }
