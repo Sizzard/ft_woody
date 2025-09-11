@@ -1,7 +1,8 @@
 NAME = woody_woodpacker
 TEST = sample
 SRCS = main.c srcs/utils.c srcs/injection.c srcs/encrypt.c
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
+OBJDIR = objs
 OBJ = $(SRCS:.c=.o)
 
 all : $(NAME)

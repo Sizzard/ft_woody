@@ -7,8 +7,23 @@
 #include <stdlib.h>
 
 // extern uint64_t get_proc_value();
-extern void encrypt();
+extern void encrypt(unsigned char *text, size_t size);
+extern void decrypt_test();
+// extern void test_db();
 
+// void dcrypt() {
+//     char text[] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor i";
+//     encrypt(text, 256);
+//     puts("\nEncrypted: ");
+//     write(1, text, 256);
+//     encrypt(text, 256);
+//     puts("\nDecrypted :");
+//     write(1, text, 256);
+// }
+
+// void test_caca() {
+//     test_db();
+// }
 // uint64_t get_proc_value() {
 //     uint64_t address;
 //     char buffer[13] = {0};
@@ -59,6 +74,8 @@ extern void encrypt();
 
 int main(void) {
     // printf("%lx\n", get_proc_value());
-    encrypt();
+    // dcrypt();
+    decrypt_test();
+    // test_caca();
     // printf("%lx\n", strtox());
 }

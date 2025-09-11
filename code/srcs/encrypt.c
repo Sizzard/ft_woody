@@ -12,18 +12,27 @@ void rc4_encrypt(unsigned char *K, unsigned char *text, size_t size) {
     for (int i = 0; i < 256; i++) {
         S[i] = i;
     }
-    for (int i, j = 0; i < 256; i++) {
-        j = (j + S[i] + K[i]) % 256;
+    for (int i = 0, j = 0; i < 256; i++) {
+        // j = (j + S[i] + K[i]) % 256;
+        j = j + S[i];
+        j = j + K[i];
+        j %= 256;
         swap(&S[i], &S[j]);
     }
-    for(int idx, i, j = 0; idx < 256; idx++) {
-        i = (i + 1) % 256;
-        j = (j + S[i]) % 256;
+    for(int idx = 0, i = 0, j = 0; idx < 256; idx++) {
+        // i = (i + 1) % 256;
+        // j = (j + S[i]) % 256;
+        // swap(&S[i], &S[j]);
+        i++;
+        i %= 256;
+        j = j + S[i];
+        j %= 256;
         swap(&S[i], &S[j]);
+
     }
     for(size_t i = 0; i < size; i++) {
         text[i] = text[i] ^ S[i];
-        // printf("%d, ", text[i]);
+        printf("%d, ", text[i]);
     }
     // for(size_t i = 0; i < size; i++) {
     //     text[i] = text[i] ^ S[i];

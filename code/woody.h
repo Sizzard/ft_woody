@@ -25,8 +25,9 @@ bool                is_already_infected(t_file *file);
 void                print_ehdr(const Elf64_Ehdr *eHdr);
 void                print_all_phdr(t_file *file, const Elf64_Ehdr *eHdr) ;
 void                print_phdr(const Elf64_Phdr *pHdr);
+Elf64_Phdr          *find_pt_load_phdr(t_file *file, const Elf64_Ehdr *eHdr);
 Elf64_Phdr          *find_pt_note_phdr(t_file *file, const Elf64_Ehdr *eHdr);
-void                hijack_phdr(t_file *file, Elf64_Ehdr *eHdr, Elf64_Phdr *pHdr);
+void                hijack_phdr(t_file *file, Elf64_Ehdr *eHdr, Elf64_Phdr *pHdr, Elf64_Phdr *plHdr);
 bool                append_payload_no_pie(t_file *file, uint64_t og_entry);
 bool                append_payload_pie(t_file *file, uint64_t og_entry);
 

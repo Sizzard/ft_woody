@@ -110,6 +110,23 @@ Elf64_Shdr *find_texttab(t_file *file, const Elf64_Ehdr *eHdr) {
     return NULL;
 }
 
+Elf64_Phdr *find_pt_load_phdr(t_file *file, const Elf64_Ehdr *eHdr) {
+    for(uint16_t i = 0; i < eHdr->e_phnum; i++) {
+        Elf64_Phdr *pHdr = (Elf64_Phdr *)(file->ptr + eHdr->e_phoff + i * eHdr->e_phentsize);
+        if (eHdr->e_phoff + i * eHdr->e_phentsize > (long unsigned int)file->size + eHdr->e_phentsize) {
+            fprintf(stderr, "woody: Incorrect file provided\n");
+            return NULL;
+        }
+        if (pHdr->p_flags == (PF_X | PF_R)) {
+            print_phdr(pHdr);
+            puts("FOUND PT_LOAD IN ELF FILE");
+            return pHdr;
+        }
+    }
+    fprintf(stderr, "woody: Coulnd't find PT_LOAD section in file %s, aborting\n ", file->path);
+    return NULL;
+}
+
 Elf64_Phdr *find_pt_note_phdr(t_file *file, const Elf64_Ehdr *eHdr) {
     for(uint16_t i = 0; i < eHdr->e_phnum; i++) {
         Elf64_Phdr *pHdr = (Elf64_Phdr *)(file->ptr + eHdr->e_phoff + i * eHdr->e_phentsize);
