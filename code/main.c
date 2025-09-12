@@ -4,6 +4,7 @@ bool handle_file(t_file *file) {
     Elf64_Ehdr *eHdr = (Elf64_Ehdr *)file->ptr;
     Elf64_Phdr *pHdr, *plHdr;
     uint64_t og_entry =  eHdr->e_entry;
+    
     if (eHdr->e_type == ET_EXEC) {
         puts("No PIE detected");
         file->pie = false;
@@ -26,27 +27,42 @@ bool handle_file(t_file *file) {
         return ERROR;
     }
 
+    file->key =  generate_key();
+    if (file->key == NULL) {
+        return ERROR;
+    }
     puts("Found PT_NOTE pHdr and PT_load pHdr");
     // print_phdr(pHdr);
 
     hijack_phdr(file, eHdr, pHdr, plHdr);
-    if (file->pie == false) {
-        append_payload_no_pie(file, og_entry);
-    }
-    else {
-        append_payload_pie(file, og_entry);
-    }
 
     const Elf64_Shdr *shdr = find_texttab(file, eHdr);
     if (shdr == NULL) {
         fprintf(stderr, "woody: no .text section in file provided\n");
         return 1;
     }
-    encrypt(file, shdr->sh_offset, shdr->sh_size);
+    
+    if (file->pie == false) {
+        append_payload_no_pie(file, og_entry, shdr->sh_size);
+    }
+    else {
+        append_payload_pie(file, og_entry, shdr->sh_size);
+    }
+
+    encrypt(file->key, &file->ptr[shdr->sh_offset], shdr->sh_size);
     return 0;
 }
 
+void cleanup_file(t_file *file) {
 
+    munmap(file->ptr, file->size);
+
+    if (file->key) {
+        free(file->key);
+    }
+    free(file);
+
+}
 
 int main(int ac, char **av) {
     t_file *file;
@@ -67,9 +83,8 @@ int main(int ac, char **av) {
     }
 
     handle_file(file);
-    
-    munmap(file->ptr, file->size);
-    free(file);
+
+    cleanup_file(file);
 
     return 0;
 }

@@ -163,7 +163,7 @@ t_file *open_file(char *file_name) {
         return NULL;
     }
 
-    file->path = file_name;
+    file->path = (uint8_t *)file_name;
 
     file->fd = open(file_name, O_RDWR);
     if (file->fd == -1) {
@@ -189,10 +189,32 @@ t_file *open_file(char *file_name) {
     return file;
 }
 
-bool is_already_infected(t_file *file) {
-    const uint8_t end_of_payload[14] = {0x2e, 0x2e, 0x2e, 0x2e, 0x57, 0x4f, 0x4f, 0x44, 0x59, 0x2e, 0x2e, 0x2e, 0x2e, 0x0a};
+uint8_t *generate_key() {
+    uint8_t *key = malloc(sizeof(uint8_t) * 64);
+    if (key == NULL) {
+        fprintf(stderr, "woody: can't generate key");
+        return NULL;
+    }
 
-    if (ft_strncmp(&file->ptr[file->size - 14], end_of_payload, 14) == 0) {
+    int fd = open("/dev/urandom", O_RDONLY);
+    if (fd == -1) {
+        fprintf(stderr, "woody: can't generate key");
+        return NULL;
+    }
+    int red = read(fd, key, 64);
+    if (red != 64) {
+        fprintf(stderr, "woody: can't generate key");
+        return NULL;
+    }
+    puts("Key is :");
+    for (int i = 0; i < 64; i++) {
+        printf("0x%x, ", key[i]);
+    }
+    return key;
+}
+
+bool is_already_infected(t_file *file) {
+    if (ft_strncmp(&file->ptr[file->size - 14], (const uint8_t *)"....WOODY....\n", 14) == 0) {
         return true;
     }
     return false;

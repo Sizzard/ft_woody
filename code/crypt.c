@@ -26,12 +26,12 @@ void rc4_encrypt(unsigned char *K, unsigned char *text) {
         j = (j + S[i]) % 256;
         swap(&S[i], &S[j]);
     }
-    for(int i = 0; i < 388; i++) {
+    for(int i = 0; i < 2318; i++) {
         text[i] = text[i] ^ S[i];
         printf("%d, ", text[i]);
     }
     puts("");
-    for(int i = 0; i < 388; i++) {
+    for(int i = 0; i < 2318; i++) {
         unsigned char decrypted = text[i] ^ S[i];
         printf("%c", decrypted);
     }
@@ -40,7 +40,7 @@ void rc4_encrypt(unsigned char *K, unsigned char *text) {
 int main(void) {
     
     unsigned char key[256];
-    unsigned char text[] = "Ceci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normale\n";
+    unsigned char text[] = "Ceci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normaleCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normaleCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normaleCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normaleCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normaleCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normalCeci est un texte totalement normale\n";
 
     int fd = open("/dev/random", O_RDONLY);
     if (fd == -1) {

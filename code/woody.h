@@ -11,7 +11,8 @@
 
 typedef struct s_file {
     uint8_t     *ptr;
-    char        *path;
+    uint8_t     *key;
+    uint8_t     *path;
     off_t       size;
     int         fd;
     bool        pie;
@@ -28,9 +29,10 @@ void                print_phdr(const Elf64_Phdr *pHdr);
 Elf64_Phdr          *find_pt_load_phdr(t_file *file, const Elf64_Ehdr *eHdr);
 Elf64_Phdr          *find_pt_note_phdr(t_file *file, const Elf64_Ehdr *eHdr);
 void                hijack_phdr(t_file *file, Elf64_Ehdr *eHdr, Elf64_Phdr *pHdr, Elf64_Phdr *plHdr);
-bool                append_payload_no_pie(t_file *file, uint64_t og_entry);
-bool                append_payload_pie(t_file *file, uint64_t og_entry);
+bool                append_payload_no_pie(t_file *file, uint64_t og_entry, size_t text_section_size);
+bool                append_payload_pie(t_file *file, uint64_t og_entry, size_t text_section_size);
 
-int                 encrypt(t_file *file, size_t text_offset, size_t text_size);
+uint8_t             *generate_key();
+void                encrypt(uint8_t *K, uint8_t *text, size_t size);
 Elf64_Shdr          *find_texttab(t_file *file, const Elf64_Ehdr *eHdr);
 void                print_shdr(const Elf64_Shdr *shdr);

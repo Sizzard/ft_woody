@@ -9,6 +9,8 @@
 // extern uint64_t get_proc_value();
 extern void encrypt(unsigned char *text, size_t size);
 extern void decrypt_test();
+extern void woody();
+extern void lil_encrypt(uint8_t *text, size_t size);
 // extern void test_db();
 
 // void dcrypt() {
@@ -72,10 +74,22 @@ extern void decrypt_test();
 //     return res;
 // }
 
+void lil_enc() {
+    unsigned char text[] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor i";
+    lil_encrypt(text, sizeof(text));
+    puts("ENCRYPTED TEXT");
+    write(1, text, sizeof(text));
+    lil_encrypt(text, sizeof(text));
+    puts("\nDECRYPTED TEXT");
+    write(1, text, sizeof(text));
+}
+
 int main(void) {
     // printf("%lx\n", get_proc_value());
     // dcrypt();
-    decrypt_test();
+    // decrypt_test();
+    lil_enc();
+    // woody();
     // test_caca();
     // printf("%lx\n", strtox());
 }
