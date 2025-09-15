@@ -5,63 +5,10 @@ section .text
 ;rsp - 13 = buf
 
 decrypt_test:
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    lea rax, [rel .label]
-    add rax, 10
-    mov byte [rax] , 0x91
-.label:
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    ret
-
-
-str_test:
-    times 100 db 0
+    mov rax, 10
+    lea rdi, [rel .label]
+    mov rsi, 20
+    mov rdx, 7
+    syscall
+    cmp rax, 0
+    jl .exit

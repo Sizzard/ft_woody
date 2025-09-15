@@ -2,7 +2,7 @@
 
 bool handle_file(t_file *file) {
     Elf64_Ehdr *eHdr = (Elf64_Ehdr *)file->ptr;
-    Elf64_Phdr *pHdr, *plHdr;
+    Elf64_Phdr *pHdr;
     uint64_t og_entry =  eHdr->e_entry;
     
     if (eHdr->e_type == ET_EXEC) {
@@ -21,9 +21,8 @@ bool handle_file(t_file *file) {
     // print_all_phdr(file, eHdr);
     printf("ENTRY POINT = 0x%08lx\n", eHdr->e_entry);
     // printf(" and = 0x%04lx\n", (uint64_t)file->ptr[eHdr->e_entry]);
-    plHdr = find_pt_load_phdr(file, eHdr);
     pHdr = find_pt_note_phdr(file, eHdr);
-    if (pHdr == NULL || plHdr == NULL) {
+    if (pHdr == NULL) {
         return ERROR;
     }
 
@@ -31,10 +30,10 @@ bool handle_file(t_file *file) {
     if (file->key == NULL) {
         return ERROR;
     }
-    puts("Found PT_NOTE pHdr and PT_load pHdr");
+    puts("Found PT_NOTE pHdr");
     // print_phdr(pHdr);
 
-    hijack_phdr(file, eHdr, pHdr, plHdr);
+    hijack_phdr(file, eHdr, pHdr);
 
     const Elf64_Shdr *shdr = find_texttab(file, eHdr);
     if (shdr == NULL) {
@@ -48,7 +47,7 @@ bool handle_file(t_file *file) {
     else {
         append_payload_pie(file, og_entry, shdr->sh_size);
     }
-
+    printf("Encrypting at : offset in file : 0x%08lx\n", shdr->sh_offset);
     encrypt(file->key, &file->ptr[shdr->sh_offset], shdr->sh_size);
     return 0;
 }

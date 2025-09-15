@@ -28,7 +28,7 @@ void                print_all_phdr(t_file *file, const Elf64_Ehdr *eHdr) ;
 void                print_phdr(const Elf64_Phdr *pHdr);
 Elf64_Phdr          *find_pt_load_phdr(t_file *file, const Elf64_Ehdr *eHdr);
 Elf64_Phdr          *find_pt_note_phdr(t_file *file, const Elf64_Ehdr *eHdr);
-void                hijack_phdr(t_file *file, Elf64_Ehdr *eHdr, Elf64_Phdr *pHdr, Elf64_Phdr *plHdr);
+void                hijack_phdr(t_file *file, Elf64_Ehdr *eHdr, Elf64_Phdr *pHdr);
 bool                append_payload_no_pie(t_file *file, uint64_t og_entry, size_t text_section_size);
 bool                append_payload_pie(t_file *file, uint64_t og_entry, size_t text_section_size);
 

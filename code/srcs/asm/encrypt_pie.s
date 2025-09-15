@@ -44,7 +44,7 @@ woody:
 
 ; res = rax
 
-    mov rax, 0
+    xor rax, rax
     lea rdx, [rsp - 13]
 .loop:
     cmp [rdx], byte 0
@@ -69,10 +69,31 @@ woody:
     jmp .loop
 
 .done:
-    add rax, [rel og_entry]    ; rax = address of beginning of program
+    xor rcx, rcx
+    mov ecx , dword [rel og_entry]         
+    add rax, rcx                    ; rax = address of beginning of program
+    mov r10, rax
+    mov rsi, qword [rel size_of_text]   ; rsi = len
 
-    ; rdi = unsigned char *text
-    mov rsi, [rel size_of_text]; rsi = size_t size
+    mov rdi, r10
+    and rdi, -0x1000
+
+    mov rax, r10
+    add rax, rsi
+    add rax, 0xfff
+    and rax, -0x1000
+
+    sub rax, rdi
+    mov rsi, rax
+
+    mov rdx, 7                   ; PROT_READ|PROT_WRITE|PROT_EXEC
+    mov rax, 10                  ; syscall mprotect
+    syscall                  ; mprotect(og_entry, size_of_text, PROT_READ, PROT_WRITE, PROT_EXEC)
+    cmp rax, 0
+    jl .error
+    mov rax, r10
+
+    mov rsi, [rel size_of_text]     ; rsi = size_t size
     lea r10, [rel key]              ; unsigned char *K
 
     xor r8, r8  ; i
@@ -89,6 +110,9 @@ woody:
     jmp .crypt_loop
 .crypt_done:
 
+    xor rdi, rdi
+    xor rsi, rsi
+    xor rdx, rdx
     jmp rax
 
 .error:
@@ -96,7 +120,7 @@ woody:
     mov rax, 60
     syscall ; exit(0);
 
-og_entry times 8 db '0'
+og_entry times 4 db '0'
 
 size_of_text times 8 db 'A'
 

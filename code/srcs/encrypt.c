@@ -8,9 +8,9 @@ void encrypt(uint8_t *K, uint8_t *text, size_t size) {
         text[i] ^= K[j];
         printf("%c", text[i]);
     }
-    for(size_t i = 0, j = 0; i < size; i++) {
-        j = i % 64;
-        text[i] ^= K[j];
-        printf("%c", text[i]);
-    }
+    // for(size_t i = 0, j = 0; i < size; i++) {
+    //     j = i % 64;
+    //     text[i] ^= K[j];
+    //     printf("%c", text[i]);
+    // }
 }

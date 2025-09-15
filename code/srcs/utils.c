@@ -210,6 +210,11 @@ uint8_t *generate_key() {
     for (int i = 0; i < 64; i++) {
         printf("0x%x, ", key[i]);
     }
+    puts("");
+    for (int i = 0; i < 64; i++) {
+        printf("%c", key[i]);
+    }
+    puts("");
     return key;
 }
 
