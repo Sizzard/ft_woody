@@ -10,8 +10,8 @@
 
 // extern uint64_t get_proc_value();
 // extern void encrypt(unsigned char *text, size_t size);
-extern void decrypt_test();
-// extern void woody();
+// extern void decrypt_test();
+extern void woody();
 // extern void lil_encrypt(uint8_t *text, size_t size);
 // extern void test_db();
 
@@ -89,11 +89,11 @@ extern void decrypt_test();
 int main(void) {
     // printf("%lx\n", get_proc_value());
     // dcrypt();
-    decrypt_test();
+    // decrypt_test();
     // int *test = NULL;
     // mprotect(test, 4, PROT_READ | PROT_WRITE | PROT_EXEC);
     // lil_enc();
-    // woody();
+    woody();
     // test_caca();
     // printf("%lx\n", strtox());
 }

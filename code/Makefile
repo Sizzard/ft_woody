@@ -1,17 +1,10 @@
 NAME = woody_woodpacker
-TEST = sample
 SRCS = main.c srcs/utils.c srcs/injection.c srcs/encrypt.c
 CFLAGS = -Wall -Wextra -Werror -g
 OBJDIR = objs
 OBJ = $(SRCS:.c=.o)
 
 all : $(NAME)
-	gcc write_file.c
-
-test : $(TEST)
-
-$(TEST) : write_file.o
-	gcc $(CFLAGS) write_file.c -o $(TEST)
 
 $(NAME) : $(OBJ)
 	gcc $(CFLAGS) -o $(NAME) $(OBJ)
