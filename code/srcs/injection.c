@@ -39,11 +39,11 @@ bool append_payload_no_pie(t_file *file, uint64_t og_entry, size_t text_section_
     int ret;
 
     printf("Copying 0x%04lX into shellcode\n", og_entry);
-    memcpy(payload + 181, &og_entry, 8);
+    ft_memcpy(payload + 181, &og_entry, 8);
 
-    memcpy(payload + 181 + 4, &text_section_size, 8);
+    ft_memcpy(payload + 181 + 4, &text_section_size, 8);
 
-    memcpy(payload + 181 + 12, file->key, 64);
+    ft_memcpy(payload + 181 + 12, file->key, 64);
 
     if (lseek(file->fd, 0, SEEK_END) == (off_t) -1) {
         fprintf(stderr, "woody: Can't seek file\n");
@@ -91,11 +91,11 @@ bool append_payload_pie(t_file *file, uint64_t og_entry, size_t text_section_siz
     int ret;
 
     printf("Copying 0x%04lX into shellcode\n", og_entry);
-    memcpy(payload + 299, &entry_lo, 4);
+    ft_memcpy(payload + 299, &entry_lo, 4);
 
-    memcpy(payload + 299 + 4, &text_section_size, 8);
+    ft_memcpy(payload + 299 + 4, &text_section_size, 8);
 
-    memcpy(payload + 299 + 12, file->key, 64);
+    ft_memcpy(payload + 299 + 12, file->key, 64);
 
     if (lseek(file->fd, 0, SEEK_END) == (off_t) -1) {
         fprintf(stderr, "woody: Can't seek file\n");

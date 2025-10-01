@@ -166,6 +166,25 @@ bool find_symtab(uint8_t *file, size_t file_size, const Elf64_Ehdr *eHdr, const 
     return false;
 }
 
+void	*ft_memcpy(void *dest, const void *src, size_t n)
+{
+	size_t				i;
+	unsigned char		*d;
+	const unsigned char	*s;
+
+	if (!dest || !src)
+		return (NULL);
+	i = 0;
+	d = dest;
+	s = src;
+	while (i < n)
+	{
+		d[i] = s[i];
+		i++;
+	}
+	return (dest);
+}
+
 t_file *open_file(char *file_name) {
     t_file      *file = malloc(sizeof(t_file));
 
