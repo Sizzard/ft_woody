@@ -142,18 +142,29 @@ Elf64_Phdr *find_pt_note_phdr(t_file *file, const Elf64_Ehdr *eHdr) {
     return NULL;
 }
 
-// bool replace_in_file(int fd, size_t pos, size_t to_add, char *buf) {
-//     char buffer[16384] = {0};
-// 	int red;
-
-//     lseek(fd, pos, SEEK_SET);
-//     red = read(fd, buffer, sizeof(buffer));
-//     lseek(fd, pos, SEEK_SET);
-//     write(fd, buf, to_add);
-//     lseek(fd, pos + to_add, SEEK_SET);
-//     write(fd, buffer, red);
-//     return false;
-// }
+bool find_symtab(uint8_t *file, size_t file_size, const Elf64_Ehdr *eHdr, const char *shStrTab_data) {
+    for (int i = 0; i < eHdr->e_shnum; i++) {
+        const long unsigned int sHdr_offset = eHdr->e_shoff + (sizeof(Elf64_Shdr) * i);
+        if (sHdr_offset >= (long unsigned int)file_size) {
+            return -1;
+        }
+        const Elf64_Shdr *sHdr = (Elf64_Shdr *)(file + sHdr_offset);
+        // if (!is_within_file_range(file->ptr, (void *)sHdr)) {
+        //     return -1;
+        // }
+        const char *section_name = shStrTab_data + sHdr->sh_name;
+        // printf("comparing : %s with .symtab\n", section_name);
+        // if (!is_within_file_range(file->ptr, (void *)section_name)) {
+        //     return -1;
+        // }
+        // printf(" [%2d] : %s\n", i, section_name);
+        if (ft_strncmp((const uint8_t *)section_name, (const uint8_t *)".symtab", ft_strlen(".symtab")) == 0) {
+            // printf("%s found at index %d\n", section_name, i);
+            return true;
+        }
+    }
+    return false;
+}
 
 t_file *open_file(char *file_name) {
     t_file      *file = malloc(sizeof(t_file));
@@ -175,6 +186,7 @@ t_file *open_file(char *file_name) {
     file->size = lseek(file->fd, 0, SEEK_END);
     if (file->size == (off_t) -1 || file->size < 50) {
         fprintf(stderr, "woody: Can't seek file\n");
+        close(file->fd);
         free(file);
         return NULL;
     }
@@ -182,6 +194,7 @@ t_file *open_file(char *file_name) {
     file->ptr = mmap(0, file->size, PROT_READ | PROT_WRITE, MAP_SHARED, file->fd, 0);
     if (file->ptr == (void *) -1) {
         fprintf(stderr, "woody: Can't mmap file\n");
+        close(file->fd);
         free(file);
         return NULL;
     }

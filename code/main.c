@@ -1,10 +1,32 @@
 #include "woody.h"
 
+bool is_stripped(t_file *file, Elf64_Ehdr *eHdr) {
+    const Elf64_Shdr *shStrTab = (Elf64_Shdr *)&file->ptr[eHdr->e_shoff + (sizeof(Elf64_Shdr) * eHdr->e_shstrndx)];
+    // if (!is_within_file_range(file, (void *)shStrTab)) {
+    //     ft_putstr_fd("Error while parsing file\n", 2);
+    //     return 1;
+    // }
+
+    const char *shStrTab_data = (const char *)(file->ptr + shStrTab->sh_offset);
+    // if (!is_within_file_range(file, (void *)shStrTab_data)) {
+    //     ft_putstr_fd("Error while parsing file\n", 2);
+    //     return 1;
+    // }
+    if (find_symtab(file->ptr, file->size, eHdr, shStrTab_data) == false) {
+        return true;
+    }
+    return false;
+}
+
 bool handle_file(t_file *file) {
     Elf64_Ehdr *eHdr = (Elf64_Ehdr *)file->ptr;
     Elf64_Phdr *pHdr;
     uint64_t og_entry =  eHdr->e_entry;
     
+    if (is_stripped(file, eHdr)) {
+        fprintf(stderr, "woody: file is stripped can't inject\n");
+        return ERROR;
+    }
     if (eHdr->e_type == ET_EXEC) {
         puts("No PIE detected");
         file->pie = false;
@@ -59,6 +81,7 @@ void cleanup_file(t_file *file) {
     if (file->key) {
         free(file->key);
     }
+    close(file->fd);
     free(file);
 
 }
